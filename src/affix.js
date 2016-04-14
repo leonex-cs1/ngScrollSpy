@@ -1,11 +1,13 @@
 mod.directive('affix', function(ScrollSpy) {
-  var affixCloneFn= function(elem) {
+  var affixCloneFn= function(elem, affixClass) {
     if (!elem.prop('ngScrollSpy')) {
       var placeholder = elem.clone();
+      placeholder.removeClass(affixClass).addClass('ngscrollspy-placeholder');
       elem.prop('ngScrollSpy', {
           'placeholder': placeholder,
           'refreshPlaceholder': function() {
               var newPlaceholder = elem.clone();
+              newPlaceholder.removeClass(affixClass).addClass('ngscrollspy-placeholder');
               if (placeholder[0].parentNode) {
                   placeholder[0].parentNode.replaceChild(newPlaceholder[0], placeholder[0]);
               }
@@ -24,13 +26,13 @@ mod.directive('affix', function(ScrollSpy) {
         if(affixOptions.placeholder) {
           // insert cloned element into DOM to serve as a placeholder,
           // because the original element (elem) will be pulled out of the flow by getting affixed
-          elem.after(affixCloneFn(elem));
+          elem.after(affixCloneFn(elem, affixClass));
         }
         elem.addClass(affixClass);
       } else {
         if(affixOptions.placeholder) {
           // remove clone from DOM again
-          affixCloneFn(elem).detach();
+          affixCloneFn(elem, affixClass).detach();
         }
         elem.removeClass(affixClass);
       }
