@@ -198,12 +198,22 @@ mod.service('ScrollSpy', function($window) {
 
 });
 mod.directive('affix', function(ScrollSpy) {
-    var affixCloneFn= function(elem) {
-    if (!elem.data('$ngScrollSpy.placeholder')) {
+  var affixCloneFn= function(elem) {
+    if (!elem.prop('ngScrollSpy')) {
       var placeholder = elem.clone();
-      elem.data('$ngScrollSpy.placeholder', placeholder);
+      elem.prop('ngScrollSpy', {
+          'placeholder': placeholder,
+          'refreshPlaceholder': function() {
+              var newPlaceholder = elem.clone();
+              if (placeholder[0].parentNode) {
+                  placeholder[0].parentNode.replaceChild(newPlaceholder[0], placeholder[0]);
+              }
+
+              elem.prop('ngScrollSpy').placeholder = newPlaceholder;
+          }
+      });
     }
-    return elem.data('$ngScrollSpy.placeholder');
+    return elem.prop('ngScrollSpy').placeholder;
   };
 
   var affixFn= function(shouldAffixFn, wasAffixed, affixClass, affixOptions, elem) {
